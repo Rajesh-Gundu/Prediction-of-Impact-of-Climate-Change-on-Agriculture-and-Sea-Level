@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Predict the impact of climate change</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <!-- jQuery -->
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  <!-- Bootstrap JS -->
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body style="margin: 0;
+padding: 0;
+background-color: #f0f0f0;
+color: #333;
+height:100%;
+position: relative;
+min-height: 100vh;
+padding-bottom: 100px;">
+  <header style="background-color: #007bff; 
+                color: #fff;
+                padding: 1px 0; text-align: center;">
+    <div class="container" style="max-width: 800px;
+    margin: 0 auto;
+    padding: 5px;">
+        <h3>Climate Change Prediction</h3>
+        <p>Predict the impact of climate change on agriculture and sea level</p>
+    </div>
+  </header>
+  <main style="text-align: center;">
+    <div class="container mt-5">
+      <h3 style="font-family:verdana; color: rgb(9, 107, 114) ">Select Year</h3>
+      <form id="dateForm" method="POST" action="/predict">
+        <div class="form-row text-center" style="margin-left: 440px;">
+              <div class="col-md-4 mb-3 text-center" >
+                <label for="yearSelect"></label>
+                <select class="custom-select" id="yearSelect" name="year" required>
+                  <option value="" disabled selected>Select a year</option>
+                </select>
+              </div>
+          </div>
+        <button class="btn btn-primary" type="submit">Predict</button>
+      </form>
+      <br><br>
+      {% if results %}
+          <h2 style="color: rgb(9, 107, 114)">Results for Year {{ request.form.year }}</h2><br>
+              <h5 style="margin-left: -0.4%;">Predicted Temperature : {{ results['temperature']|round(3, 'floor') }} Celsius</h5>
+              <h5 style="margin-left: 6%;">Predicted Rainfall &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: {{ results['rainfall']|round(3, 'floor') }} mm per year</h5>
+              <h5 style="margin-left: -5.4%;">Predicted Sea Level &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;: {{ results['sealevel']|round(3, 'floor') }} feet</h5><br>
+          <h4 style="color: rgb(149, 12, 117); font-size: 190%;">Swipe up for graphical view of predictions</h4><br>
+          <h3 style="color: rgb(9, 107, 114)">Crop Yield Predictions</h3><br>
+      <canvas id="yieldChart" width="80" height="30"></canvas>
+      <script>
+          const cropLabels = ['Maize', 'Potato', 'Paddy', 'Wheat'];
+          const cropYields = [
+              `{{ results['maize']|tojson }}`,
+              `{{ results['potato']|tojson }}`,
+              `{{ results['paddy']|tojson }}`,
+              `{{ results['wheat']|tojson }}`
+          ];
+
+          const ctx = document.getElementById('yieldChart').getContext('2d');
+          const yieldChart = new Chart(ctx, {
+              type: 'bar',
+              data: {
+                  labels: cropLabels,
+                  datasets: [{
+                      label: 'Yield',
+                      data: cropYields,
+                      backgroundColor: [
+                          '#ff33ff',
+                          '#ccff33',
+                          '#ffcc66',
+                          '#33ff33'
+                      ],
+                      borderColor: [
+                          '#cc00cc',
+                          '#ace600',
+                          '#ffbb33',
+                          '#00e600'
+                      ],
+                      borderWidth: 3
+                  }]
+              },
+              options: {
+                  plugins: {
+                      title:{
+                        display: true,
+                        text: 'Types of Crop VS Yield in tonnes',
+                        color: 'green',
+                        font: {
+                          weight: 'bold',
+                          size: 24
+                        }
+                      }
+                  },
+                  scales: {
+                      x:{
+                          title: {
+                            display: true,
+                            text: 'Crops',
+                            color: '#0033cc',
+                            font: {
+                              weight: 'bold',
+                              size: 18
+                            }
+                          }
+                      },
+                      y: {
+                          title: {
+                            display: true,
+                            text: 'Yield in tonnes',
+                            color: '#0033cc',
+                            font: {
+                              weight: 'bold',
+                              size: 18
+                            }
+                          },
+                          beginAtZero: true
+                      }
+                  },
+                  barThickness: 90
+              }
+          });
+      </script>
+      {% endif %}
+    </div>
+    <script>
+      $(document).ready(function() {
+        // Populate the year dropdown from 1901 to 2050
+        for (let year = 1970; year <= 2050; year++) {
+          $('#yearSelect').append(new Option(year, year));
+        }
+      });
+    </script>
+  </main>
+  <footer style="background-color: #007bff;
+  color: #fff;
+  padding: 0px 0;
+  text-align: center;
+  margin: 0;
+  position: absolute;
+  bottom: 0;
+  width: 100%;">
+    <div class="container" style="max-width: 800px;
+    margin: 0 auto;
+    padding: 0px 0px;">
+        <p style="margin: 0px; padding: 0px;">&copy; 2024 Climate Change Prediction</p>
+        <p style="margin: 0px; padding: 0px;">contact us :  Rajesh 22AG1A6692     Naveen  22AG1A66A4       Praneeth  22AG1A66B7</p>
+    </div>
+  </footer>
+</body>
+</html>
