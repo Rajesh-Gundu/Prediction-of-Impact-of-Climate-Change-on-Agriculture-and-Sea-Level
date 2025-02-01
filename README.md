@@ -1,5 +1,4 @@
 # Prediction-of-Impact-of-Climate-Change-on-Agriculture-and-Sea-Level
-# Climate Change Impact Prediction
 
 ## Overview
 This project predicts climate change impacts on agriculture and sea levels in India using machine learning.
